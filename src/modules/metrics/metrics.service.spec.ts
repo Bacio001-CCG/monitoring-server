@@ -17,6 +17,8 @@ describe('MetricsService', () => {
             saveSnapshot: jest.fn(),
             findRecentSnapshots: jest.fn(),
             findAllHosts: jest.fn(),
+            findHostsOverview: jest.fn(),
+            findHistory: jest.fn(),
           },
         },
       ],

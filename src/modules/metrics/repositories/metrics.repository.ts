@@ -12,6 +12,8 @@ import {
   NewHost,
   NewMetricSnapshot,
 } from '../../../database/schema';
+import { HostOverview } from '../types/host-overview.type';
+import { MetricHistoryPoint } from '../types/metric-history-point.type';
 
 @Injectable()
 export class MetricsRepository {
@@ -97,4 +99,43 @@ export class MetricsRepository {
   findAllHosts(): Promise<Host[]> {
     return this.db.select().from(hosts).orderBy(hosts.hostname);
   }
+
+  async findHostsOverview(): Promise<HostOverview[]> {
+    const allHosts = await this.findAllHosts();
+    const recent = await this.findRecentSnapshots(500);
+    const latestByHostId = new Map<string, MetricSnapshot>();
+
+    for (const row of recent) {
+      if (!latestByHostId.has(row.hostRefId)) {
+        latestByHostId.set(row.hostRefId, row);
+      }
+    }
+
+    return allHosts.map((host) => ({
+      host,
+      latest: latestByHostId.get(host.id) ?? null,
+    }));
+  }
+
+  async findHistory(
+    fingerprint: string,
+    limit: number,
+  ): Promise<MetricHistoryPoint[]> {
+    const rows = await this.db
+      .select({
+        collectedAt: metricSnapshots.collectedAt,
+        memoryUsedPercent: metricSnapshots.memoryUsedPercent,
+        memoryUsedBytes: metricSnapshots.memoryUsedBytes,
+        primaryTemperatureC: metricSnapshots.primaryTemperatureC,
+        uptimeSeconds: metricSnapshots.uptimeSeconds,
+      })
+      .from(metricSnapshots)
+      .innerJoin(hosts, eq(metricSnapshots.hostRefId, hosts.id))
+      .where(eq(hosts.fingerprint, fingerprint))
+      .orderBy(desc(metricSnapshots.collectedAt))
+      .limit(limit);
+
+    return rows.reverse();
+  }
 }
+

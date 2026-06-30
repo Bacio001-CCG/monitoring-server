@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { CreateMetricDto } from './dto/create-metric.dto';
 import { ListMetricsQueryDto } from './dto/list-metrics-query.dto';
+import { HostHistoryQueryDto } from './dto/host-history-query.dto';
 import { MetricsService } from './metrics.service';
 
 @Controller('metrics')
@@ -29,5 +30,15 @@ export class MetricsController {
   @Get('hosts')
   findHosts() {
     return this.metricsService.findHosts();
+  }
+
+  @Get('overview')
+  findOverview() {
+    return this.metricsService.findOverview();
+  }
+
+  @Get('history')
+  findHistory(@Query() query: HostHistoryQueryDto) {
+    return this.metricsService.findHistory(query.fingerprint, query.limit);
   }
 }

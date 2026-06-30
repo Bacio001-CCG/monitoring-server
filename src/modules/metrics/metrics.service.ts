@@ -8,6 +8,8 @@ import {
 } from '../../database/schema';
 import { CreateMetricDto } from './dto/create-metric.dto';
 import { MetricsRepository } from './repositories/metrics.repository';
+import { HostOverview } from './types/host-overview.type';
+import { MetricHistoryPoint } from './types/metric-history-point.type';
 
 @Injectable()
 export class MetricsService {
@@ -29,6 +31,17 @@ export class MetricsService {
 
   findHosts(): Promise<Host[]> {
     return this.metricsRepository.findAllHosts();
+  }
+
+  findOverview(): Promise<HostOverview[]> {
+    return this.metricsRepository.findHostsOverview();
+  }
+
+  findHistory(
+    fingerprint: string,
+    limit = 120,
+  ): Promise<MetricHistoryPoint[]> {
+    return this.metricsRepository.findHistory(fingerprint, limit);
   }
 
   private async upsertHost(dto: CreateMetricDto): Promise<Host> {

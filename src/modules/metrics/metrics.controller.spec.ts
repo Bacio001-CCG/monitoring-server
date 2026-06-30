@@ -15,6 +15,8 @@ describe('MetricsController', () => {
             ingest: jest.fn(),
             findRecent: jest.fn(),
             findHosts: jest.fn(),
+            findOverview: jest.fn(),
+            findHistory: jest.fn(),
           },
         },
       ],
