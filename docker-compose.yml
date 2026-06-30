@@ -1,0 +1,11 @@
+services:
+  server:
+    build: .
+    container_name: monitoring-server
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: production
+    ports:
+      - '${PORT:-3001}:${PORT:-3001}'
