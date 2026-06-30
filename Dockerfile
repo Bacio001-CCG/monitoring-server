@@ -1,11 +1,10 @@
 FROM node:22-alpine AS base
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@10.32.1 --activate
 WORKDIR /app
 
 FROM base AS build
 COPY package.json pnpm-lock.yaml ./
-RUN echo "minimum-release-age=0" > .npmrc \
-  && pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile
 COPY . .
 RUN pnpm build \
   && pnpm prune --prod
