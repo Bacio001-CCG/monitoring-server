@@ -17,5 +17,5 @@ COPY --from=build /app/dist ./dist
 COPY --from=build /app/drizzle ./drizzle
 COPY docker-entrypoint.sh ./
 RUN chmod +x docker-entrypoint.sh
-EXPOSE 3001
+EXPOSE 6000
 ENTRYPOINT ["./docker-entrypoint.sh"]

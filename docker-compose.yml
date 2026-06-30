@@ -7,5 +7,6 @@ services:
       - .env
     environment:
       NODE_ENV: production
+      PORT: 6000
     ports:
-      - '${PORT:-3001}:${PORT:-3001}'
+      - '6000:6000'

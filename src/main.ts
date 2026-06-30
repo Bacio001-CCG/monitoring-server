@@ -15,7 +15,9 @@ async function bootstrap() {
   );
 
   const configService = app.get(ConfigService);
-  const port = Number(configService.get('PORT') ?? 3001);
+  const nodeEnv = configService.get<string>('NODE_ENV') ?? 'development';
+  const defaultPort = nodeEnv === 'production' ? 6000 : 3001;
+  const port = Number(configService.get('PORT') ?? defaultPort);
   await app.listen(port);
 }
 bootstrap();
